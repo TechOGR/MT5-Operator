@@ -15,7 +15,7 @@ def mainStyles():
             selection-background-color: #ff00ff;
             selection-color: #000000;
         }
-            
+
         QLineEdit:hover {
             border: 2px solid #ff0000;
             color: #ff00ff;

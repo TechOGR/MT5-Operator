@@ -5,11 +5,22 @@ from PyQt5.QtGui import QIcon
 
 imagen_path = "img/logo_app.jpeg"
 
-def initConnect():
+def initConnect(userData):
+    esto = [86330370,"Q+Jx2pSd", "MetaQuotes-Demo"]
     
-    response = mt5.initialize(login=86330370, password="Q+Jx2pSd", server="MetaQuotes-Demo")
+    userLogin, userPassword, metaServer = userData
     
-    return response
+    response = mt5.initialize(
+        login=int(userLogin),
+        password=userPassword,
+        server=metaServer
+    )
+    
+    if response:
+        print("Conexión exitosa")
+        Dialog().exec_()
+        
+    # Me quedé por aquí
 
 class Dialog(QDialog):
     

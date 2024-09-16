@@ -33,6 +33,7 @@ from modules.connect_mt5 import (
     Dialog,
     initConnect
 )
+from modules.components.customEditServer import CustomEditServer
 from os import path
 
 
@@ -149,8 +150,8 @@ class Window(QMainWindow):
         self.passwordEdit.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.passwordEdit.setStyleSheet("background-color: black;")
         self.passwordEdit.setEchoMode(QLineEdit.Password)
-        
-        self.serverEdit = QLineEdit(self.frame_buttom_items)
+
+        self.serverEdit = CustomEditServer(self.frame_buttom_items, self)
         self.serverEdit.setMaximumSize(int(self.width() / 2), 50)
         self.serverEdit.setGeometry(150, 250, 180, 50)
         self.serverEdit.setPlaceholderText("Server-MT5")
@@ -186,14 +187,40 @@ class Window(QMainWindow):
         self.apply_shadow()
 
     def connectMT5(self):
-        user = ""
-        password = ""
-        server = ""
-        response = initConnect()
         
-        if response:
-            Dialog().exec_()
+        user = self.userEdit.text()
+        password = self.passwordEdit.text()
+        server = self.serverEdit.text()
+        dataUser = (user, password, server)
+        
+        access = self.testingUserData(dataUser)
+        
+        if access:
+            initConnect(dataUser)
+        else:
+            print("Something has gone wrong")
 
+    def testingUserData(self,data):
+        MIN_CHAR = 8
+        MAX_CHAR = 15
+        
+        user, password, server = data
+        
+        if len(user) < MIN_CHAR or len(user) > MAX_CHAR:
+            # Aquí mostraré una alerta, creando una clase Dialog
+            print("User exceeds the limit")
+            return False
+        elif len(password) < MIN_CHAR or len(password) > MAX_CHAR:
+            print("Password exceeds the limit")
+            return False
+        elif len(server) == 0:
+            print("Please select one Server from the Server List")
+            return False
+        else:
+            return True
+
+        # Continuar las verificaciones
+        
     def openURL(self, urlComing):
         url = QUrl(urlComing)
         QDesktopServices.openUrl(url)
