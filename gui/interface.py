@@ -8,7 +8,8 @@ from PyQt5.QtWidgets import (
     QGraphicsBlurEffect,
     QGraphicsDropShadowEffect,
     QLineEdit,
-    QPushButton
+    QPushButton,
+    QShortcut
 )
 from PyQt5.QtCore import (
     Qt,
@@ -30,8 +31,11 @@ from PyQt5.QtGui import (
 from functools import partial
 from modules.styles import mainStyles
 from modules.connect_mt5 import (
-    Dialog,
     initConnect
+)
+from modules.ctrl_data import (
+    saveData,
+    loadData
 )
 from modules.components.customEditServer import CustomEditServer
 from os import path
@@ -72,6 +76,7 @@ class Window(QMainWindow):
 
     # Starting Components
     def components(self):
+        self.styleComponents()
         self.effectsComponents()
         
         self.centralWidget = QWidget()
@@ -160,19 +165,29 @@ class Window(QMainWindow):
         
         self.buttonSave = QPushButton("Save",self.frame_buttom_items)
         self.buttonSave.setGeometry(55,330, 70, 50)
-        self.buttonSave.setStyleSheet("background-color: black;color: #d2053d;border: 2px solid #d2053d;border-radius: 10px;font-family: monospace; font-size: 15px;")
+        self.buttonSave.setStyleSheet(self.styleButtons)
+        self.buttonSave.clicked.connect(self.toSave)
         
         self.buttonConnect = QPushButton("Connect",self.frame_buttom_items)
         self.buttonConnect.setGeometry(205,370, 70, 50)
-        self.buttonConnect.setStyleSheet("background-color: black;color: #d2053d;border: 2px solid #d2053d;border-radius: 10px;font-family: monospace; font-size: 15px;")
+        self.buttonConnect.setStyleSheet(self.styleButtons)
         self.buttonConnect.clicked.connect(self.connectMT5)
         
         self.buttonLoad = QPushButton("Load",self.frame_buttom_items)
         self.buttonLoad.setGeometry(355,330, 70, 50)
-        self.buttonLoad.setStyleSheet("background-color: black;color: #d2053d;border: 2px solid #d2053d;border-radius: 10px;font-family: monospace; font-size: 15px;")
+        self.buttonLoad.setStyleSheet(self.styleButtons)
+        self.buttonLoad.clicked.connect(self.toLoad)
         
         self.layout_frame_buttom.addWidget(self.frame_buttom_items)
         
+        # Shorcut Keys ------------
+        shorcutClear = QShortcut(Qt.CTRL + Qt.SHIFT + Qt.Key_C, self)
+        shorcutClear.activated.connect(self.clearEdits)
+        
+        shortcutShowPassword = QShortcut (Qt.CTRL + Qt.SHIFT + Qt.Key_H, self)
+        shortcutShowPassword.activated.connect(self.showHidePassword)
+        # -------------------------
+        self.checkPasswordHide = False
         self.footerSocial()
         # ----------------------------------------------------
         
@@ -185,7 +200,37 @@ class Window(QMainWindow):
         label_background.lower()
 
         self.apply_shadow()
+    
+    # Save and Load Data --------------------------
+    def toSave(self):
+        userData = (self.userEdit.text(), self.passwordEdit.text(), self.serverEdit.text())
+        
+        saveData(self.fullPath,userData)
+        
+    def toLoad(self):
+        try:
+            data = loadData()
+            
+            user = data["User"]
+            passwd = data["Pass"]
+            server = data["Server"]
+            
+            self.userEdit.setText(str(user)),
+            self.passwordEdit.setText(passwd)
+            self.serverEdit.setText(server)
+            
+        except (FileNotFoundError, FileExistsError):
+            
+            self.userEdit.setText("ERROR")
+            self.passwordEdit.setText("ERROR")
+            self.serverEdit.setText("ERROR")
+        
+        
+        print(data)
 
+    # ----------------------------------------------
+
+    # Connecting to MT5
     def connectMT5(self):
         
         user = self.userEdit.text()
@@ -200,6 +245,7 @@ class Window(QMainWindow):
         else:
             print("Something has gone wrong")
 
+    # Check data is correct
     def testingUserData(self,data):
         MIN_CHAR = 8
         MAX_CHAR = 15
@@ -220,11 +266,13 @@ class Window(QMainWindow):
             return True
 
         # Continuar las verificaciones
-        
+    
+    # Opening Urls
     def openURL(self, urlComing):
         url = QUrl(urlComing)
         QDesktopServices.openUrl(url)
     
+    # Social Links
     def footerSocial(self):
         layoutHorizontal = QHBoxLayout()
 
@@ -258,9 +306,20 @@ class Window(QMainWindow):
         
         layoutHorizontal.setAlignment(Qt.AlignmentFlag.AlignCenter)
     
+    # Effects for every components
     def effectsComponents(self):
         self.blur_effect = QGraphicsBlurEffect()
         self.blur_effect.setBlurRadius(1)
+
+    def styleComponents(self):
+        self.styleButtons = """
+            background-color: black;
+            color: #d2053d;
+            border: 2px solid #d2053d;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 15px;
+        """
 
     # Setting Rounded Borders
     def round_corners(self, radius):
@@ -283,6 +342,23 @@ class Window(QMainWindow):
         
         self.centralWidget.setGraphicsEffect(shadow_effect)
 
+    # Shortcuts --------------------------------------
+    # Clear QLineEdits
+    def clearEdits(self):
+        self.userEdit.setText("")
+        self.passwordEdit.clear()
+        self.serverEdit.clear()
+    
+    # ShowHidePassword
+    def showHidePassword(self):
+        if self.checkPasswordHide:
+            self.passwordEdit.setEchoMode(QLineEdit.Password)
+            self.checkPasswordHide = False
+        else:
+            self.passwordEdit.setEchoMode(QLineEdit.Normal)
+            self.checkPasswordHide = True
+        
+    # -----------------------------------------------
 
     # Events for Frame --------------
     def mousePressEvent(self, event):
@@ -302,5 +378,5 @@ class Window(QMainWindow):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:
             self.close()
-            
+
     # --------------------------------

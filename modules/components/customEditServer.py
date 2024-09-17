@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import (
     QListWidget,
     QListWidgetItem
 )
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import (
     QFont,
     QColor
