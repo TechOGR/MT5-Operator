@@ -23,8 +23,9 @@ from os import path, getcwd
 
 class Dialog(QDialog):
     
-    def __init__(self):
+    def __init__(self, msg):
         super().__init__()
+        self.sms = msg
         self.imagen_path = "img/logo_app.jpeg"
         self.path_img = path.join(getcwd(), "img")
         self.ClasStyles = self.styles()
@@ -40,10 +41,10 @@ class Dialog(QDialog):
         
         layout = QVBoxLayout()
         
-        labelInfo = QLabel("Espera 🤚 Lee 👇", self)
+        labelInfo = QLabel("Wait Random 🤚 Read 👇", self)
         labelInfo.setStyleSheet(self.ClasStyles["labelInfo"])
         
-        labelMessage = QLabel("Conectado", self)
+        labelMessage = QLabel(self.sms, self)
         labelMessage.setStyleSheet(self.ClasStyles["labelSMS"])
         
         layout.addWidget(labelInfo, alignment=Qt.AlignmentFlag.AlignHCenter)

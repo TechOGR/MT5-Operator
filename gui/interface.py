@@ -204,31 +204,65 @@ class Window(QMainWindow):
     # Save and Load Data --------------------------
     def toSave(self):
         userData = (self.userEdit.text(), self.passwordEdit.text(), self.serverEdit.text())
-        
-        saveData(self.fullPath,userData)
+        if self.checkingServers():
+            saveData(self.fullPath,userData)
+        else:
+            self.serverEdit.setText("Select one :)")
         
     def toLoad(self):
-        try:
-            data = loadData()
-            
-            user = data["User"]
-            passwd = data["Pass"]
-            server = data["Server"]
-            
-            self.userEdit.setText(str(user)),
-            self.passwordEdit.setText(passwd)
-            self.serverEdit.setText(server)
-            
-        except (FileNotFoundError, FileExistsError):
-            
+        data = loadData()
+        
+        if data == False:
             self.userEdit.setText("ERROR")
             self.passwordEdit.setText("ERROR")
             self.serverEdit.setText("ERROR")
-        
+        else:
+            user = data["User"]
+            passwd = data["Pass"]
+            server = data["Server"]  
+            self.userEdit.setText(str(user)),
+            self.passwordEdit.setText(passwd)
+            self.serverEdit.setText(server)
         
         print(data)
 
+    def checkingServers(self) -> bool:
+        serverList = [
+            "FTMO-Demo",
+            "FTMO-Demo2",
+            "FTMO-Server",
+            "FTMO-Server2",
+            "FTMO-Server3",
+            "FTMO-Server4",
+            "MetaQuotes-Demo"
+        ]
+        server = self.serverEdit.text()
+        
+        for i in serverList:
+            if i == server:
+                return True
+            else:
+                continue
+    
     # ----------------------------------------------
+
+    # Show NewElements
+    def newElements(self):
+        
+        btnTool_1 = QPushButton("GraphInfo",self.frame_buttom_items)
+        btnTool_1.setStyleSheet(self.styleButtons)
+        btnTool_1.setGeometry(50, 150, 180, 70)
+        btnTool_1.setVisible(True)
+        
+        btnTool_2 = QPushButton("GraphWithPrediction",self.frame_buttom_items)
+        btnTool_2.setStyleSheet(self.styleButtons)
+        btnTool_2.setGeometry(250, 150, 180, 70)
+        btnTool_2.setVisible(True)
+        
+        btnTool_3 = QPushButton("PredictorBot",self.frame_buttom_items)
+        btnTool_3.setStyleSheet(self.styleButtons)
+        btnTool_3.setGeometry(150, 250, 180, 70)
+        btnTool_3.setVisible(True)
 
     # Connecting to MT5
     def connectMT5(self):
@@ -241,7 +275,20 @@ class Window(QMainWindow):
         access = self.testingUserData(dataUser)
         
         if access:
-            initConnect(dataUser)
+            response = initConnect(dataUser)
+            if response:
+                self.userEdit.setVisible(False)
+                self.serverEdit.setVisible(False)
+                self.passwordEdit.setVisible(False)
+                self.buttonLoad.setVisible(False)
+                self.buttonSave.setVisible(False)
+                self.buttonConnect.setVisible(False)
+                
+                self.newElements()
+            else:
+                self.userEdit.setText("Ups! something")
+                self.serverEdit.setText("went wrong :(")
+                self.passwordEdit.setText("")
         else:
             print("Something has gone wrong")
 
@@ -313,12 +360,18 @@ class Window(QMainWindow):
 
     def styleComponents(self):
         self.styleButtons = """
+        QPushButton {
             background-color: black;
             color: #d2053d;
             border: 2px solid #d2053d;
             border-radius: 10px;
             font-family: monospace;
             font-size: 15px;
+        }
+        QPushButton:hover {
+            color: #d205fd;
+            border: 2px solid #d205fd;
+        }
         """
 
     # Setting Rounded Borders

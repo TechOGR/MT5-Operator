@@ -16,7 +16,7 @@ class CustomEditServer(QLineEdit):
         self.initComponents()
         
         self.suggestions = QListWidget(mainWindow)
-        self.suggestions.setGeometry(150,300,180,150)
+        self.suggestions.setGeometry(168,300,180,150)
         self.suggestions.setStyleSheet(self.styleSuggestions)
         self.suggestions.setVisible(False)
         self.suggestions.itemClicked.connect(self.selectOption)
@@ -62,7 +62,7 @@ class CustomEditServer(QLineEdit):
         self.suggestions.hide()
         
     def getListServers(self):
-        serverList = [
+        return [
             "FTMO-Demo",
             "FTMO-Demo2",
             "FTMO-Server",
@@ -71,5 +71,3 @@ class CustomEditServer(QLineEdit):
             "FTMO-Server4",
             "MetaQuotes-Demo"
         ]
-        
-        return serverList

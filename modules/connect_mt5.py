@@ -14,9 +14,12 @@ def initConnect(userData):
     
     if response:
         print("Conexión exitosa")
-        Dialog().exec_()
+        Dialog("Connected").exec_()
+        return True
     else:
-        print("Error inicializando MT5")
+        print("Error initializing MT5")
+        Dialog("Error 😂").exec_()
+        return False
         
     # Me quedé por aquí
 
