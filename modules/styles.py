@@ -1,5 +1,5 @@
 def mainStyles():
-    styles_main = """
+    return """
         * {
             background-color: black;
             color: white;
@@ -30,4 +30,3 @@ def mainStyles():
             background-color: #111111;
         }
         """
-    return styles_main

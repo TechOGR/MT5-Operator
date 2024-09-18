@@ -211,20 +211,22 @@ class Window(QMainWindow):
         
     def toLoad(self):
         data = loadData()
-        
+
         if data == False:
             self.userEdit.setText("ERROR")
             self.passwordEdit.setText("ERROR")
             self.serverEdit.setText("ERROR")
         else:
-            user = data["User"]
-            passwd = data["Pass"]
-            server = data["Server"]  
-            self.userEdit.setText(str(user)),
-            self.passwordEdit.setText(passwd)
-            self.serverEdit.setText(server)
-        
+            self._extracted_from_toLoad(data)
         print(data)
+
+    def _extracted_from_toLoad(self, data):
+        user = data["User"]
+        passwd = data["Pass"]
+        server = data["Server"]
+        self.userEdit.setText(str(user)),
+        self.passwordEdit.setText(passwd)
+        self.serverEdit.setText(server)
 
     def checkingServers(self) -> bool:
         serverList = [
@@ -249,20 +251,15 @@ class Window(QMainWindow):
     # Show NewElements
     def newElements(self):
         
-        btnTool_1 = QPushButton("GraphInfo",self.frame_buttom_items)
+        self._newButtons("GraphInfo", 50, 150)
+        self._newButtons("GraphWithPrediction", 250, 150)
+        self._newButtons("PredictorBot", 150, 250)
+
+    def _newButtons(self, arg0, arg1, arg2):
+        btnTool_1 = QPushButton(arg0, self.frame_buttom_items)
         btnTool_1.setStyleSheet(self.styleButtons)
-        btnTool_1.setGeometry(50, 150, 180, 70)
+        btnTool_1.setGeometry(arg1, arg2, 180, 70)
         btnTool_1.setVisible(True)
-        
-        btnTool_2 = QPushButton("GraphWithPrediction",self.frame_buttom_items)
-        btnTool_2.setStyleSheet(self.styleButtons)
-        btnTool_2.setGeometry(250, 150, 180, 70)
-        btnTool_2.setVisible(True)
-        
-        btnTool_3 = QPushButton("PredictorBot",self.frame_buttom_items)
-        btnTool_3.setStyleSheet(self.styleButtons)
-        btnTool_3.setGeometry(150, 250, 180, 70)
-        btnTool_3.setVisible(True)
 
     # Connecting to MT5
     def connectMT5(self):
@@ -271,26 +268,28 @@ class Window(QMainWindow):
         password = self.passwordEdit.text()
         server = self.serverEdit.text()
         dataUser = (user, password, server)
-        
+
         access = self.testingUserData(dataUser)
-        
-        if access:
-            response = initConnect(dataUser)
-            if response:
-                self.userEdit.setVisible(False)
-                self.serverEdit.setVisible(False)
-                self.passwordEdit.setVisible(False)
-                self.buttonLoad.setVisible(False)
-                self.buttonSave.setVisible(False)
-                self.buttonConnect.setVisible(False)
-                
-                self.newElements()
+
+        if access := self.testingUserData(dataUser):
+            if response := initConnect(dataUser):
+                self._hideOldElements()
             else:
                 self.userEdit.setText("Ups! something")
                 self.serverEdit.setText("went wrong :(")
                 self.passwordEdit.setText("")
         else:
             print("Something has gone wrong")
+
+    def _hideOldElements(self):
+        self.userEdit.setVisible(False)
+        self.serverEdit.setVisible(False)
+        self.passwordEdit.setVisible(False)
+        self.buttonLoad.setVisible(False)
+        self.buttonSave.setVisible(False)
+        self.buttonConnect.setVisible(False)
+
+        self.newElements()
 
     # Check data is correct
     def testingUserData(self,data):
@@ -312,8 +311,6 @@ class Window(QMainWindow):
         else:
             return True
 
-        # Continuar las verificaciones
-    
     # Opening Urls
     def openURL(self, urlComing):
         url = QUrl(urlComing)
@@ -323,10 +320,11 @@ class Window(QMainWindow):
     def footerSocial(self):
         layoutHorizontal = QHBoxLayout()
 
-        listIcons = []
-        for i in range(5):
-            listIcons.append(QIcon(path.join(self.path_img,"social",f"{i}.png")))
-
+        listIcons = [
+            QIcon(
+                path.join(self.path_img, "social", f"{i}.png")
+            ) for i in range(5)
+        ]
         listSocials = [
             "https://www.facebook.com/profile.php?id=100092376152191",
             "https://github.com/TechOGR/",

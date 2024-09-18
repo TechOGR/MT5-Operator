@@ -62,14 +62,16 @@ class Dialog(QDialog):
         print(urlComing)
         url = QUrl(urlComing)
         QDesktopServices.openUrl(url)
-     
     def footerSocial(self):
         layoutHorizontal = QHBoxLayout()
 
-        listIcons = []
-        for i in range(5):
-            listIcons.append(QIcon(path.join(self.path_img,"social",f"{i}-white.png")))
 
+        listIcons = [
+            QIcon(
+                path.join(self.path_img, "social", f"{i}-white.png")
+            ) for i in range(5)
+        ]
+        
         listSocials = [
             "https://www.facebook.com/profile.php?id=100092376152191",
             "https://github.com/TechOGR/",

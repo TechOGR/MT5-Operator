@@ -25,7 +25,7 @@ def createConfigFolder():
                     "Server": "any data :)"
                 },f
             )
-    except:
+    except Exception:
         print("ERROR while we try create the folder")
 
 # Convert to integer the user mt5
@@ -33,7 +33,7 @@ def convertInt(user):
     try:
         int(user)
         return True
-    except:
+    except Exception:
         return False
 
 # Save the UserData in the file 
@@ -56,19 +56,19 @@ def toSave(user, passwd, server) -> None:
 
 # First Check for save the userData
 def saveData(path_, dataUser_) -> None:
-    MIN_CHAR = 8
-    MAX_CHAR = 15
-
     user, password, server = dataUser_
 
     if not exists(pathFolder):
         createConfigFolder()
     else:
+        MIN_CHAR = 8
+        MAX_CHAR = 15
+
         if len(user) < MIN_CHAR or len(user) > MAX_CHAR and len(password) < MIN_CHAR or len(password) > MAX_CHAR:
             print("User and Password does not meet the minimum requirements")
-        elif len(user) < MIN_CHAR or len(user) > MAX_CHAR:
+        elif len(user) > MAX_CHAR:
             print("User does meet the minimum requirements")
-        elif len(password) < MIN_CHAR or len(password) > MAX_CHAR:
+        elif len(password) < MIN_CHAR:
             print("Password does not meet the minimum requirements")
         elif len(server) == 0:
             print("Please select one Server from the Server List")
@@ -94,6 +94,6 @@ def loadData():
                 rF.close()
                 print("File loaded: ", data)
                 return data
-        except:
+        except Exception:
             print("ERROR loading data from config file")
             return False

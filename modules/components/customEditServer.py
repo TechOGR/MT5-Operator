@@ -22,7 +22,6 @@ class CustomEditServer(QLineEdit):
         self.suggestions.itemClicked.connect(self.selectOption)
         
         self.checkEnabled = False
-       
     def initComponents(self):
         self.styleSuggestions = """
             background-color: #000000;
