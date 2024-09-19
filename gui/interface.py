@@ -38,6 +38,7 @@ from modules.ctrl_data import (
     loadData
 )
 from modules.components.customEditServer import CustomEditServer
+from modules.bot.predict_bot import TradingBot
 from os import path
 
 
@@ -255,11 +256,21 @@ class Window(QMainWindow):
         self._newButtons("GraphWithPrediction", 250, 150)
         self._newButtons("PredictorBot", 150, 250)
 
-    def _newButtons(self, arg0, arg1, arg2):
+    def _newButtons(self, arg0, width, height):
         btnTool_1 = QPushButton(arg0, self.frame_buttom_items)
         btnTool_1.setStyleSheet(self.styleButtons)
-        btnTool_1.setGeometry(arg1, arg2, 180, 70)
+        btnTool_1.setGeometry(width, height, 180, 70)
         btnTool_1.setVisible(True)
+        
+        if arg0 == "PredictorBot":
+            btnTool_1.clicked.connect(self.startingBot)
+    
+    def startingBot(self):
+        TradingBot(
+            (int(self.userEdit.text()),
+            self.passwordEdit.text(),
+            self.serverEdit.text())
+        )
 
     # Connecting to MT5
     def connectMT5(self):
