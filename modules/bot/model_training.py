@@ -1,12 +1,10 @@
-from catboost import CatBoostClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import cross_val_score, GridSearchCV
+from sklearn.model_selection import GridSearchCV
 from xgboost import XGBClassifier
 
 def train_xgboost_model(df):
-    """Entrena el modelo XGBoost con optimización de hiperparámetros"""
     features = df[['ema_fast', 'ema_slow', 'bb_upper', 'bb_lower', 'atr', 'rsi', 'macd', 'macd_signal', 
                 'macd_histogram', 'plus_di', 'minus_di', 'adx', 'stochastic_k', 'stochastic_d', 'vol_change']]
     labels = df['label']

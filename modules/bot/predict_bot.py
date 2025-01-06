@@ -1,11 +1,11 @@
 import MetaTrader5 as mt5
 import pandas as pd
-import os, time, logging
+import time, logging
 from PyQt5.QtWidgets import (
     QDialog,
     QVBoxLayout,
     QLabel,
-    QProgressBar
+    QProgressBar,
 )
 from PyQt5.QtCore import (
     Qt,
@@ -18,19 +18,28 @@ from PyQt5.QtGui import (
     QRegion
 )
 
-from modules.bot.data_preparation import get_historical_data, prepare_data
+from modules.bot.data_preparation import (
+    get_historical_data,
+    prepare_data
+) 
 from modules.bot.indicators import calculate_indicators
-from modules.bot.model_training import train_xgboost_model
+from modules.bot.model_training import (
+    train_xgboost_model, 
+    train_xgboost_model_v2
+)
 from threading import Thread as tds
+import sys
 
 class TradingBot:
-    def __init__(self, userData, lot_ = None, risk_ = None):
+    def __init__(self, user, password, server):
         
-        print(userData, "#################")
+        print(user,server, password, "#################")
         
         self.ORDER_BUY = 0
         self.ORDER_SELL = 1
-        self.ACCOUNT_ID, self.PASSWORD, self.SERVER = userData
+        self.ACCOUNT_ID = int(user)
+        self.PASSWORD = password
+        self.SERVER = server
 
         self.EMA_FAST_PERIOD = 5
         self.EMA_SLOW_PERIOD = 20
@@ -43,11 +52,11 @@ class TradingBot:
         self.LOT_SIZE = 0.01
         self.STOP_LOSS = 15
         self.TAKE_PROFIT = 30
-        self.RISK_PERCENTAGE = 0.1  # Riesgo del 2% por operación
+        self.RISK_PERCENTAGE = 0.02  # Riesgo del 2% por operación
 
         self.model = None
         self.df = None
-        self.symbol = 'EURUSD'
+        self.symbol = 'GBPUSD'
         self.timeframe = mt5.TIMEFRAME_M5
         
         # Iniciar el hilo del proceso de trading
@@ -324,3 +333,20 @@ class TradingThread(QThread):
         
         self.progress_update.emit("Proceso completado", 100)
         self.quit()
+
+# if __name__ == "__main__":
+#     logging.basicConfig(level=logging.INFO)
+    
+
+#     args = sys.argv
+#     if len(args) == 4:
+        
+#         user = args[1]
+#         passwd = args[2]
+#         server = args[3]
+#         app = QApplication(sys.argv)
+#         bot = TradingBot(user, passwd, server)
+        
+#         sys.exit(app.exec_())
+#     else:
+#         print(logging.error("ERROR"))

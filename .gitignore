@@ -4,5 +4,4 @@ dist
 *.txt
 *.spec
 .vscode
-config
 *.log

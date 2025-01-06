@@ -1,0 +1,1 @@
+pyinstaller --additional-hooks-dir=hooks .\main.py --onefile --icon .\img\logo_app.jpeg --windowed --name MT-Operator

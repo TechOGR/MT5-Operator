@@ -9,7 +9,8 @@ from PyQt5.QtWidgets import (
     QGraphicsDropShadowEffect,
     QLineEdit,
     QPushButton,
-    QShortcut
+    QShortcut,
+    QStyle
 )
 from PyQt5.QtCore import (
     Qt,
@@ -39,7 +40,10 @@ from modules.ctrl_data import (
 )
 from modules.components.customEditServer import CustomEditServer
 from modules.bot.predict_bot import TradingBot
-from os import path
+from os import (
+    path,
+    system
+)
 
 
 class Window(QMainWindow):
@@ -201,6 +205,17 @@ class Window(QMainWindow):
         label_background.lower()
 
         self.apply_shadow()
+        
+        pixHelp = QPixmap(path.join(self.path_img, "help.png"))
+        helpIcon = QIcon(pixHelp)
+        self.btnHelp = QPushButton(self.frameTop)
+        self.btnHelp.setGeometry(10,10,30,30)
+        self.btnHelp.setIcon(helpIcon)
+        self.btnHelp.setIconSize(QSize(30,30))
+        self.btnHelp.clicked.connect(self.showHelp)
+        
+    def showHelp(self):
+        print("Showing Help")
     
     # Save and Load Data --------------------------
     def toSave(self):
@@ -267,10 +282,12 @@ class Window(QMainWindow):
     
     def startingBot(self):
         TradingBot(
-            (int(self.userEdit.text()),
+            int(self.userEdit.text()),
             self.passwordEdit.text(),
-            self.serverEdit.text())
+            self.serverEdit.text()
         )
+        # system(f"start {path.join(self.fullPath,'funcions','predictBot.exe')} {int(self.userEdit.text())} {self.passwordEdit.text()} {self.serverEdit.text()}")
+        # system(f"python .\\modules\\bot\\predict_bot.py 1520417483 x$bD==x65$n1* FTMO-Demo2")
 
     # Connecting to MT5
     def connectMT5(self):
@@ -308,6 +325,11 @@ class Window(QMainWindow):
         MAX_CHAR = 15
         
         user, password, server = data
+        global responseUser
+        try:
+            responseUser = int(user)
+        except ValueError as vE:
+            responseUser = False
         
         if len(user) < MIN_CHAR or len(user) > MAX_CHAR:
             # Aquí mostraré una alerta, creando una clase Dialog
@@ -318,6 +340,8 @@ class Window(QMainWindow):
             return False
         elif len(server) == 0:
             print("Please select one Server from the Server List")
+            return False
+        elif not responseUser:
             return False
         else:
             return True
@@ -337,7 +361,7 @@ class Window(QMainWindow):
             ) for i in range(5)
         ]
         listSocials = [
-            "https://www.facebook.com/profile.php?id=100092376152191",
+            "https://www.facebook.com/profile.php?id=61570586445561",
             "https://github.com/TechOGR/",
             "https://www.instagram.com/onel_crack/",
             "https://www.youtube.com/channel/UCDaHKnOv_YOr4R8OzCU6Aiw",
