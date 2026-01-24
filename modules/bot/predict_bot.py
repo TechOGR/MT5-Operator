@@ -56,7 +56,7 @@ class TradingBot:
 
         self.model = None
         self.df = None
-        self.symbol = 'GBPUSD'
+        self.symbol = 'EURUSD'
         self.timeframe = mt5.TIMEFRAME_M5
         
         # Iniciar el hilo del proceso de trading

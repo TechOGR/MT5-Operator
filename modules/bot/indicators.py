@@ -52,9 +52,7 @@ def calculate_indicators(df):
     df['stochastic_d'] = df['stochastic_k'].rolling(window=3).mean()
 
     # Volumen
-    if 'volume' in df.columns:
-        df['vol_change'] = df['volume'].pct_change()
-    else:
-        df['vol_change'] = 0
+    
+    df['vol_change'] = df['volume'].pct_change() if 'volume' in df.columns else 0
 
     return df
